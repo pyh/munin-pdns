@@ -9,7 +9,13 @@
 #%# family=auto
 #%# capabilities=autoconf
 
-command="/etc/init.d/pdns show"
+prefix=$(echo $0 | cut -d_ -f1 | sed s/[^A-Za-z0-9]//g | grep -v pdns)
+
+if [ "$prefix" != "" ]; then
+	prefix="-$prefix"
+fi
+
+command="/etc/init.d/pdns$prefix dump"
 
 if [ "$1" = "autoconf" ]; then
         echo yes
@@ -20,7 +26,7 @@ if [ "$1" = "config" ]; then
         echo 'graph_title Power DNS latency'
         echo 'graph_args -l 0'
         echo 'graph_vlabel usec'
-        echo 'graph_category Power DNS'
+        echo "graph_category pdns$prefix"
         echo 'graph_info This graph shows Power DNS latency on the machine.'
         echo 'latency.label latency'
         echo 'latency.info Average number of microseconds needed to answer a question'
